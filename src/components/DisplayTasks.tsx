@@ -10,6 +10,7 @@ const DisplayTasks = () => {
     filter,
     filteredTasks,
     setFilteredTasks,
+    handleEdit,
   } = useDataContext();
 
   useEffect(() => {
@@ -34,6 +35,7 @@ const DisplayTasks = () => {
             task={task}
             handleCheck={handleCheck}
             handleDelete={handleDelete}
+            handleEdit={handleEdit}
           />
         ))
       ) : filter === "all" ? (

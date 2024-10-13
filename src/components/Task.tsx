@@ -6,9 +6,10 @@ type TaskProps = {
   task: TaskType;
   handleCheck: (id: number) => void;
   handleDelete: (id: number) => void;
+  handleEdit: (id: number) => void;
 };
 
-const Task = ({ task, handleCheck, handleDelete }: TaskProps) => {
+const Task = ({ task, handleCheck, handleDelete, handleEdit }: TaskProps) => {
   return (
     <div className="task">
       <CustomCheckbox task={task} handleCheck={handleCheck} />
@@ -22,7 +23,7 @@ const Task = ({ task, handleCheck, handleDelete }: TaskProps) => {
       </p>
 
       <div className="options">
-        <div className="edit-task">
+        <div className="edit-task" onClick={() => handleEdit(task.id)}>
           <GoPencil size="1.1em" />
         </div>
         <div className="delete-task" onClick={() => handleDelete(task.id)}>

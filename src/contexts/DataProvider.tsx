@@ -33,6 +33,7 @@ export type InitDataState = {
       taskId: number | null;
     }>
   >;
+  handleEdit: (id: number) => void;
 };
 
 const initState: InitDataState = {
@@ -48,7 +49,9 @@ const initState: InitDataState = {
   handleFocus: () => {},
   filteredTasks: [],
   setFilteredTasks: () => {},
+  isEditing: { editing: false, taskId: null },
   setIsEditing: () => {},
+  handleEdit: () => {},
 };
 
 const DataContext = createContext<InitDataState>(initState);
@@ -100,13 +103,10 @@ export const DataProvider = ({ children }: ChildrenProps): ReactNode => {
 
       return updatedTasks;
     });
+    setIsEditing({ editing: false, taskId: null });
   };
 
-  const editTask = (id: number) => {
-    setTasks((prevTasks) => {});
-  };
-
-  const addTask = (): void => {
+  const addTask = (newTask: string): void => {
     if (!newTask.trim()) return;
 
     setTasks((prevTasks) => {
@@ -122,14 +122,39 @@ export const DataProvider = ({ children }: ChildrenProps): ReactNode => {
 
       return updatedTasks;
     });
+
+    setNewTask("");
+  };
+
+  const editTask = (id: number): void => {
+    setTasks((prevTasks) => {
+      const updatedTasks = prevTasks.map((task) =>
+        task.id === id ? { ...task, item: newTask } : task
+      );
+      saveTasks(updatedTasks);
+      return updatedTasks;
+    });
+    setIsEditing({ editing: false, taskId: null });
+    setNewTask("");
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    addTask();
+    e.preventDefault();
+    if (!isEditing.editing) {
+      addTask(newTask);
+    } else {
+      editTask(isEditing.taskId as number);
+    }
+  };
 
-    setNewTask("");
+  const handleEdit = (id: number): void => {
+    setIsEditing({ editing: true, taskId: id });
+    const selectedTask: Task | undefined = tasks.find((task) => task.id === id);
+    if (!selectedTask) return;
+    setNewTask(selectedTask.item);
+    handleFocus();
   };
 
   return (
@@ -149,6 +174,7 @@ export const DataProvider = ({ children }: ChildrenProps): ReactNode => {
         setFilteredTasks,
         isEditing,
         setIsEditing,
+        handleEdit,
       }}
     >
       {children}
