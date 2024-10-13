@@ -26,6 +26,13 @@ export type InitDataState = {
   setFilter: React.Dispatch<React.SetStateAction<string>>;
   filteredTasks: Task[];
   setFilteredTasks: React.Dispatch<React.SetStateAction<Task[]>>;
+  isEditing: { editing: boolean; taskId: number | null };
+  setIsEditing: React.Dispatch<
+    React.SetStateAction<{
+      editing: boolean;
+      taskId: number | null;
+    }>
+  >;
 };
 
 const initState: InitDataState = {
@@ -41,6 +48,7 @@ const initState: InitDataState = {
   handleFocus: () => {},
   filteredTasks: [],
   setFilteredTasks: () => {},
+  setIsEditing: () => {},
 };
 
 const DataContext = createContext<InitDataState>(initState);
@@ -54,6 +62,10 @@ export const DataProvider = ({ children }: ChildrenProps): ReactNode => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
   const [filter, setFilter] = useState<string>("all");
+  const [isEditing, setIsEditing] = useState<{
+    editing: boolean;
+    taskId: number | null;
+  }>({ editing: false, taskId: null });
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -88,6 +100,10 @@ export const DataProvider = ({ children }: ChildrenProps): ReactNode => {
 
       return updatedTasks;
     });
+  };
+
+  const editTask = (id: number) => {
+    setTasks((prevTasks) => {});
   };
 
   const addTask = (): void => {
@@ -131,6 +147,8 @@ export const DataProvider = ({ children }: ChildrenProps): ReactNode => {
         handleFocus,
         filteredTasks,
         setFilteredTasks,
+        isEditing,
+        setIsEditing,
       }}
     >
       {children}
