@@ -215,6 +215,62 @@ body {
   background-color: rgba(225, 225, 225, 0.7);
 }
 
+.login-form .group input {
+  border: 1px solid #ccc;
+  height: 50px;
+  border-radius: 10px;
+  width: 100%;
+  font-size: 17px;
+  outline: none;
+  padding: 0 20px;
+  margin-right: 10px;
+  margin-top: 5px;
+}
+
+.login-form .group input:focus {
+  padding-inline: 19px;
+  border: 2px solid #f68084;
+}
+
+.login-form .group input::placeholder {
+  color: #d3d3d3;
+}
+
+.login-form button {
+  font-size: 15px;
+  border: none;
+  outline: none;
+  padding: 8px;
+  border-radius: 5px;
+  background: linear-gradient(45deg, #3498db, #2980b9);
+  color: white;
+  cursor: pointer;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.login-form .group {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+.separator {
+  width: 100%;
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.separator::before {
+  content: "or";
+  padding-inline: 10px;
+  background-color: #fff;
+}
+
 @media (max-width: 400px) {
   .container {
     margin-top: 30px 30px;

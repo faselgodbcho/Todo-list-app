@@ -1,4 +1,5 @@
 import { initializeApp } from "firebase/app";
+import { getAuth, connectAuthEmulator } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -13,6 +14,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // init services
+const auth = getAuth(app);
+
+// connect to the local emulators
+connectAuthEmulator(auth, "127.0.0.1:9099");
 
 // export configurations
-export { app };
+export { app, auth };
