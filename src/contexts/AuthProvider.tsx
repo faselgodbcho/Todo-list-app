@@ -5,7 +5,8 @@ import {
   signOut,
 } from "firebase/auth";
 import { createContext, ReactNode, useEffect, useState } from "react";
-import { auth } from "../config/firebase.config";
+import { auth, db } from "../config/firebase.config";
+import { setDoc, doc } from "firebase/firestore";
 
 export type User = {
   uid: string;
@@ -16,7 +17,7 @@ export type AuthData = {
   user: User | null;
   isAuthenticated: boolean;
   login: (name: string, email: string) => Promise<void>;
-  signUp: (name: string, email: string) => Promise<void>;
+  signUp: (username: string, name: string, email: string) => Promise<void>;
   logout: () => Promise<void>;
 };
 
@@ -36,7 +37,9 @@ type ChildrenTypes = {
 
 export const AuthProvider = ({ children }: ChildrenTypes): ReactNode => {
   const [user, setUser] = useState<User | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() =>
+    auth.currentUser ? true : false
+  );
 
   useEffect(() => {
     const unSub = onAuthStateChanged(auth, (firebaseUser) => {
@@ -72,13 +75,23 @@ export const AuthProvider = ({ children }: ChildrenTypes): ReactNode => {
     }
   };
 
-  const signUp = async (email: string, password: string): Promise<void> => {
+  const signUp = async (
+    username: string,
+    email: string,
+    password: string
+  ): Promise<void> => {
     try {
       const userCredentials = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
+
+      await setDoc(doc(db, "users", userCredentials.user.uid), {
+        id: userCredentials.user.uid,
+        email: userCredentials.user.email,
+        username,
+      });
     } catch (e) {
       console.error(e);
       if (e instanceof Error) alert(e.message);

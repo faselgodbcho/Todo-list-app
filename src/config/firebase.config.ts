@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, connectAuthEmulator } from "firebase/auth";
+import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -15,9 +16,11 @@ const app = initializeApp(firebaseConfig);
 
 // init services
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 // connect to the local emulators
-connectAuthEmulator(auth, "http://127.0.0.1:9099");
+// connectAuthEmulator(auth, "http://127.0.0.1:9099");
+// connectFirestoreEmulator(db, "http://127.0.0.1", 8080);
 
 // export configurations
-export { app, auth };
+export { auth, db };

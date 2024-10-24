@@ -16,7 +16,7 @@ const Login = () => {
 
   const handleSignUp = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await signUp(email, password);
+    await signUp(username, email, password);
   };
 
   return (
