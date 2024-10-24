@@ -1,4 +1,5 @@
 import {
+  createUserWithEmailAndPassword,
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
@@ -73,7 +74,7 @@ export const AuthProvider = ({ children }: ChildrenTypes): ReactNode => {
 
   const signUp = async (email: string, password: string): Promise<void> => {
     try {
-      const userCredentials = await signInWithEmailAndPassword(
+      const userCredentials = await createUserWithEmailAndPassword(
         auth,
         email,
         password

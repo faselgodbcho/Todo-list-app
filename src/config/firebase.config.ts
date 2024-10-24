@@ -17,7 +17,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 // connect to the local emulators
-connectAuthEmulator(auth, "127.0.0.1:9099");
+connectAuthEmulator(auth, "http://127.0.0.1:9099");
 
 // export configurations
 export { app, auth };

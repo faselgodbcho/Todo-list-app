@@ -1,10 +1,11 @@
 import Login from "./components/login/Login";
 import UserApp from "./components/UserAuth";
+import useAuth from "./hooks/useAuth";
 
 const App = () => {
-  const auth = false;
+  const { isAuthenticated } = useAuth();
 
-  return auth ? <UserApp /> : <Login />;
+  return isAuthenticated ? <UserApp /> : <Login />;
 };
 
 export default App;

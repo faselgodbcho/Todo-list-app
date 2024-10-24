@@ -1,4 +1,5 @@
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, FormEvent } from "react";
+import useAuth from "../../hooks/useAuth";
 
 const Login = () => {
   const [email, setEmail] = useState<string>("");
@@ -6,12 +7,24 @@ const Login = () => {
   const [username, setUsername] = useState<string>("");
   const [displayLogin, setDisplayLogin] = useState<boolean>(true);
 
+  const { login, logout, signUp } = useAuth();
+
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    await login(email, password);
+  };
+
+  const handleSignUp = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    await signUp(email, password);
+  };
+
   return (
     <div className="container">
       <h3 className="header-icon">Login or Sign up</h3>
 
       {displayLogin ? (
-        <form className="login-form">
+        <form className="login-form" onSubmit={handleLogin}>
           <div className="group">
             <label htmlFor="email">Email</label>
             <input
@@ -53,7 +66,7 @@ const Login = () => {
           </button>
         </form>
       ) : (
-        <form className="login-form">
+        <form className="login-form" onSubmit={handleSignUp}>
           <div className="group">
             <label htmlFor="username">Username</label>
             <input
