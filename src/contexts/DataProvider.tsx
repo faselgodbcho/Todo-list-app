@@ -8,7 +8,14 @@ import React, {
   useState,
 } from "react";
 import useAuth from "../hooks/useAuth";
-import { collection, doc, onSnapshot, query, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  onSnapshot,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { db } from "../config/firebase.config";
 
 export type Task = {
@@ -40,6 +47,8 @@ export type InitDataState = {
   handleEdit: (id: number) => void;
   displaySettings: boolean;
   setDisplaySettings: React.Dispatch<React.SetStateAction<boolean>>;
+  loading: boolean;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const initState: InitDataState = {
@@ -60,6 +69,8 @@ const initState: InitDataState = {
   handleEdit: () => {},
   displaySettings: false,
   setDisplaySettings: () => {},
+  loading: false,
+  setLoading: () => {},
 };
 
 const DataContext = createContext<InitDataState>(initState);
@@ -79,6 +90,7 @@ export const DataProvider = ({ children }: ChildrenProps): ReactNode => {
   }>({ editing: false, taskId: null });
   const [displaySettings, setDisplaySettings] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const { user } = useAuth();
 
@@ -86,23 +98,38 @@ export const DataProvider = ({ children }: ChildrenProps): ReactNode => {
     if (!user) return;
 
     let unSubscribe = onSnapshot(doc(db, "tasks", user.uid), (snapshot) => {
-      const fetchedTasks = snapshot.data()?.userTasks;
-      console.log(fetchedTasks);
-      setTasks(fetchedTasks as Task[]);
+      setLoading(true);
+      if (snapshot.exists()) {
+        const fetchedTasks = snapshot.data()?.userTasks;
+        console.log(fetchedTasks);
+        setTasks(fetchedTasks as Task[]);
+        setLoading(false);
+      }
+
+      setLoading(false);
     });
 
-    return () => unSubscribe();
+    return () => {
+      unSubscribe();
+      setTasks([]);
+    };
   }, [user]);
 
-  const saveTasks = (task: Task[]): void => {
-    localStorage.setItem("user-todos", JSON.stringify(task));
+  const saveTasks = async (tasks: Task[]): Promise<void> => {
+    if (!user) return;
+
+    try {
+      await updateDoc(doc(db, "tasks", user.uid), { userTasks: tasks });
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const handleFocus = (): void => {
     inputRef.current?.focus();
   };
 
-  const handleCheck = (id: number): void => {
+  const handleCheck = async (id: number): Promise<void> => {
     setTasks((prevTasks) => {
       const updatedTasks = prevTasks.map((task) =>
         task.id === id ? { ...task, checked: !task.checked } : task
@@ -195,6 +222,8 @@ export const DataProvider = ({ children }: ChildrenProps): ReactNode => {
         handleEdit,
         displaySettings,
         setDisplaySettings,
+        loading,
+        setLoading,
       }}
     >
       {children}

@@ -19,6 +19,7 @@ export type AuthData = {
   login: (name: string, email: string) => Promise<void>;
   signUp: (username: string, name: string, email: string) => Promise<void>;
   logout: () => Promise<void>;
+  isAuthLoading: boolean;
 };
 
 const initAuthState: AuthData = {
@@ -27,6 +28,7 @@ const initAuthState: AuthData = {
   login: async () => {},
   logout: async () => {},
   signUp: async () => {},
+  isAuthLoading: false,
 };
 
 const AuthContext = createContext<AuthData>(initAuthState);
@@ -40,6 +42,7 @@ export const AuthProvider = ({ children }: ChildrenTypes): ReactNode => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() =>
     auth.currentUser ? true : false
   );
+  const [isAuthLoading, setIsAuthLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const unSub = onAuthStateChanged(auth, (firebaseUser) => {
@@ -50,6 +53,8 @@ export const AuthProvider = ({ children }: ChildrenTypes): ReactNode => {
         setUser(null);
         setIsAuthenticated(false);
       }
+
+      setIsAuthLoading(false);
     });
   }, []);
 
@@ -111,6 +116,7 @@ export const AuthProvider = ({ children }: ChildrenTypes): ReactNode => {
         signUp,
         isAuthenticated,
         user,
+        isAuthLoading,
       }}
     >
       {children}
