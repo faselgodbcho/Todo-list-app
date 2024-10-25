@@ -1,21 +1,16 @@
-import AddTask from "./components/AddTask";
-import TaskFilters from "./components/TaskFilters";
-import todoIcon from "./assets/list-icon.svg";
-import DisplayTasks from "./components/DisplayTasks";
-import { DataProvider } from "./contexts/DataProvider";
+import Login from "./components/login/Login";
+import UserApp from "./components/UserAuth";
+import useAuth from "./hooks/useAuth";
+import useDataContext from "./hooks/useDataContext";
+import { auth } from "./config/firebase.config";
 
 const App = () => {
-  return (
-    <div className="container">
-      <div className="header-icon">
-        To-do list <img src={todoIcon} />
-      </div>
+  const { isAuthenticated } = useAuth();
+  const { displaySettings } = useDataContext();
 
-      <DataProvider>
-        <AddTask />
-        <TaskFilters />
-        <DisplayTasks />
-      </DataProvider>
+  return (
+    <div className={`app ${displaySettings && "dim"}`}>
+      {isAuthenticated ? <UserApp /> : <Login />}
     </div>
   );
 };

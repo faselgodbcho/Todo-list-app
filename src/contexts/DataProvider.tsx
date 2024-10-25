@@ -1,6 +1,7 @@
 import React, {
   createContext,
   FormEvent,
+  ReactElement,
   ReactNode,
   useEffect,
   useRef,
@@ -34,6 +35,8 @@ export type InitDataState = {
     }>
   >;
   handleEdit: (id: number) => void;
+  displaySettings: boolean;
+  setDisplaySettings: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const initState: InitDataState = {
@@ -52,6 +55,8 @@ const initState: InitDataState = {
   isEditing: { editing: false, taskId: null },
   setIsEditing: () => {},
   handleEdit: () => {},
+  displaySettings: false,
+  setDisplaySettings: () => {},
 };
 
 const DataContext = createContext<InitDataState>(initState);
@@ -69,6 +74,7 @@ export const DataProvider = ({ children }: ChildrenProps): ReactNode => {
     editing: boolean;
     taskId: number | null;
   }>({ editing: false, taskId: null });
+  const [displaySettings, setDisplaySettings] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -175,6 +181,8 @@ export const DataProvider = ({ children }: ChildrenProps): ReactNode => {
         isEditing,
         setIsEditing,
         handleEdit,
+        displaySettings,
+        setDisplaySettings,
       }}
     >
       {children}
