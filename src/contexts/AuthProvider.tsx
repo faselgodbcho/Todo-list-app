@@ -19,6 +19,7 @@ export type AuthData = {
   login: (name: string, email: string) => Promise<void>;
   signUp: (username: string, name: string, email: string) => Promise<void>;
   logout: () => Promise<void>;
+  isAuthLoading: boolean;
 };
 
 const initAuthState: AuthData = {
@@ -27,6 +28,7 @@ const initAuthState: AuthData = {
   login: async () => {},
   logout: async () => {},
   signUp: async () => {},
+  isAuthLoading: false,
 };
 
 const AuthContext = createContext<AuthData>(initAuthState);
@@ -36,10 +38,11 @@ type ChildrenTypes = {
 };
 
 export const AuthProvider = ({ children }: ChildrenTypes): ReactNode => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(auth.currentUser);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() =>
     auth.currentUser ? true : false
   );
+  const [isAuthLoading, setIsAuthLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const unSub = onAuthStateChanged(auth, (firebaseUser) => {
@@ -50,6 +53,8 @@ export const AuthProvider = ({ children }: ChildrenTypes): ReactNode => {
         setUser(null);
         setIsAuthenticated(false);
       }
+
+      setIsAuthLoading(false);
     });
   }, []);
 
@@ -92,6 +97,11 @@ export const AuthProvider = ({ children }: ChildrenTypes): ReactNode => {
         email: userCredentials.user.email,
         username,
       });
+
+      await setDoc(doc(db, "tasks", userCredentials.user.uid), {
+        id: userCredentials.user.uid,
+        userTasks: [],
+      });
     } catch (e) {
       console.error(e);
       if (e instanceof Error) alert(e.message);
@@ -106,6 +116,7 @@ export const AuthProvider = ({ children }: ChildrenTypes): ReactNode => {
         signUp,
         isAuthenticated,
         user,
+        isAuthLoading,
       }}
     >
       {children}
