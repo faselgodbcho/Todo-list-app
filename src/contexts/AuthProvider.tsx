@@ -36,7 +36,7 @@ type ChildrenTypes = {
 };
 
 export const AuthProvider = ({ children }: ChildrenTypes): ReactNode => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(auth.currentUser);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() =>
     auth.currentUser ? true : false
   );
@@ -91,6 +91,11 @@ export const AuthProvider = ({ children }: ChildrenTypes): ReactNode => {
         id: userCredentials.user.uid,
         email: userCredentials.user.email,
         username,
+      });
+
+      await setDoc(doc(db, "tasks", userCredentials.user.uid), {
+        id: userCredentials.user.uid,
+        userTasks: [],
       });
     } catch (e) {
       console.error(e);

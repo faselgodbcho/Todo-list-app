@@ -7,6 +7,9 @@ import React, {
   useRef,
   useState,
 } from "react";
+import useAuth from "../hooks/useAuth";
+import { collection, doc, onSnapshot, query, where } from "firebase/firestore";
+import { db } from "../config/firebase.config";
 
 export type Task = {
   id: number;
@@ -77,10 +80,19 @@ export const DataProvider = ({ children }: ChildrenProps): ReactNode => {
   const [displaySettings, setDisplaySettings] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const { user } = useAuth();
+
   useEffect(() => {
-    const savedTasks = localStorage.getItem("user-todos");
-    setTasks(savedTasks ? JSON.parse(savedTasks) : []);
-  }, []);
+    if (!user) return;
+
+    let unSubscribe = onSnapshot(doc(db, "tasks", user.uid), (snapshot) => {
+      const fetchedTasks = snapshot.data()?.userTasks;
+      console.log(fetchedTasks);
+      setTasks(fetchedTasks as Task[]);
+    });
+
+    return () => unSubscribe();
+  }, [user]);
 
   const saveTasks = (task: Task[]): void => {
     localStorage.setItem("user-todos", JSON.stringify(task));
