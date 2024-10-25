@@ -11,6 +11,7 @@ const DisplayTasks = () => {
     filteredTasks,
     setFilteredTasks,
     handleEdit,
+    loading,
   } = useDataContext();
 
   useEffect(() => {
@@ -26,6 +27,10 @@ const DisplayTasks = () => {
     }
   }, [filter, tasks]);
 
+  // if (loading) {
+  //   return <div className="display-tasks scrollbar"></div>;
+  // }
+
   return (
     <div className="display-tasks scrollbar">
       {filteredTasks.length ? (
@@ -38,6 +43,8 @@ const DisplayTasks = () => {
             handleEdit={handleEdit}
           />
         ))
+      ) : loading ? (
+        <p className="task-empty">Loading Tasks...</p>
       ) : filter === "all" ? (
         <p className="task-empty">You have no tasks.</p>
       ) : filter === "progress" ? (
