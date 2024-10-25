@@ -31,6 +31,14 @@ const DisplayTasks = () => {
   //   return <div className="display-tasks scrollbar"></div>;
   // }
 
+  if (loading) {
+    return (
+      <div className="display-tasks scrollbar">
+        <p className="task-empty">Loading Tasks...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="display-tasks scrollbar">
       {filteredTasks.length ? (
